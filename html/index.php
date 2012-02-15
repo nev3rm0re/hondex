@@ -69,11 +69,17 @@
   function calculate_score($game) {
     $time_score = (QUIZ_TIMELIMIT - (strtotime($game->ended_at) - strtotime($game->started_at)));
     
+    $quiz_score = calculate_quiz_score($game);
+        
+    return $quiz_score + $time_score;
+  }
+
+  function calculate_quiz_score($game) {
     $quiz_score = 0;
     
     $answer_ids = array();
     $user_answers = unserialize($game->answers);
-
+    
     foreach ($user_answers as $answer) {
       $answer_ids[] = $answer['answer'];
     }
@@ -86,7 +92,7 @@
       }
     }
     
-    return $quiz_score + $time_score;
+    return $quiz_score;
   }
   
   function user_can_participate($user_id) {
@@ -156,7 +162,7 @@
     }
     
     $question = R::load('question', $question_id);
-    $answers = R::find('answer', 'question_id = ?', array($question_id));
+    $answers = R::find('answer', 'question_id = ? ORDER BY RAND()', array($question_id));
     
     $seconds_left = strtotime($game->started_at) - time() + QUIZ_TIMELIMIT;
     
@@ -217,6 +223,7 @@
     }
     
     $total_score = calculate_score($game);
+    $quiz_score = calculate_quiz_score($game);
     
     $rank = R::getCell('SELECT COUNT(*) FROM game WHERE score > ?', array($total_score)) + 1;
     $attempts_left = attempts_left($game->user_id);
