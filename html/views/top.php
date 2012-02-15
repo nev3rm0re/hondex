@@ -71,33 +71,78 @@
 		<div class="inner">
 			<div id="content">
 				<div class="head">
-					<h2 class="icon icon-qualification">Kvalifikatsioon</h2>
-					<div class="timer">
-						00:60:00:00
+					<h2 class="icon icon-top">Kõik tulemused</h2>
+					<div class="text">
+						<h4>Tähtsa info pealkiri</h4>
+						<p>
+						</p>
 					</div>
 				</div>
 				<div class="content">
 					
-					<div class="q-content">
-						<div class="q-number">
-							<span class="current">21</span>/21
+					<div class="content-top">
+						<div class="top-list">
+						  <?php
+						    $scores_1 = array_slice($scores, 0, 30);
+						    $scores_2 = array_slice($scores, 30, 30);
+						    $scores_3 = array_slice($scores, 60, 30);
+						    $n = ($page - 1) * 90;
+						  ?>
+							<h2><?php echo $n + 1;?> - <?php echo $n +  30;?></h2>
+							<?php
+                foreach ($scores_1 as $s):
+                  $n++;
+							?>
+							<div class="position"><span class="number"><?php echo str_pad($n, 2, '0', STR_PAD_LEFT); ?></span></span> <?php echo lookup_name($s->user_id);?></div>
+							<?php
+                endforeach;
+							?>
 						</div>
 						
-						<div class="end">
-							<h2>Sinu tulemus:</h2>
-							
-							<div class="score">
-								<span class="label">Skoor:</span> 3210 / 74%<br/>
-								<span class="label">Postisioon:</span> 12<br/>
-								<span class="label">Katseid jäänud:</span> 3
-							</div>
-							
-							<div class="note">
-								Hea vend! Imed ikka vilinal,<br/>
-								Ladaga sõidad või?
-							</div>
+						<?php if ($scores_2): ?>
+						
+						<div class="top-list">
+							<h2><?php echo $n + 1;?> - <?php echo $n +  30;?></h2>
+							<?php
+                foreach ($scores_2 as $s):
+                  $n++;
+              ?>
+              <div class="position"><span class="number"><?php echo str_pad($n, 2, '0', STR_PAD_LEFT); ?></span></span> <?php echo lookup_name($s->user_id);?></div>
+              <?php
+                endforeach;
+              ?>
 						</div>
 						
+						<?php endif;?>
+						
+						<?php if ($scores_3): ?>
+						
+						<div class="top-list">
+							<h2><?php echo $n + 1;?> - <?php echo $n +  30;?></h2>
+							<?php
+                foreach ($scores_3 as $s):
+                  $n++;
+              ?>
+              <div class="position"><span class="number"><?php echo str_pad($n, 2, '0', STR_PAD_LEFT); ?></span></span> <?php echo lookup_name($s->user_id);?></div>
+              <?php
+                endforeach;
+              ?>
+						</div>
+						
+						<?php endif; ?>
+						
+						<div class="clear"></div>
+						
+						<?php
+						  $total = R::getCell('SELECT COUNT(*) FROM game WHERE ended_at IS NOT NULL');
+						?>
+						
+						<div class="pager">
+						  <?php for ($i = 0; $i < ceil($total / 90); $i++): ?>
+  							<a href="index.php?a=top&amp;page=<?php echo $i + 1;?>" <?php if ($i == ($page - 1)): ?>class="current"<?php endif;?>>
+  							  <?php echo $i*90 + 1;?> - <?php echo min($total, ($i + 1) * 90);?></a>
+					    <?php endfor;?>
+						</div>
 					</div>
 					
 					<div class="clear"></div>
@@ -113,49 +158,6 @@
 								<li class="special"><a href="#">&gt; Ekspeditsioon</a></li>
 								<li><a href="#">&gt; Galerii</a></li>
 							</ul>
-						</div>
-					</div>
-				</div>
-
-				<div class="block block-top-30">
-					<div class="top-30">
-						<div class="block-head">
-							<h2 class="icon icon-top-30">TOP 30</h2>
-							<div class="link">
-								<a href="#">&gt; Kõik</a>
-							</div>
-						</div>
-						<div class="top-list">
-							<div class="position position-01"><span class="number">01</span></span> absoluutselt hea vend</div>
-							<div class="position position-02"><span class="number">02</span></span> absoluutselt hea vend</div>
-							<div class="position position-03"><span class="number">03</span></span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">04</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">05</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">06</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">07</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">08</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">09</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">10</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">11</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">12</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">13</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">14</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">15</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">16</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">17</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">18</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">19</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">20</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">21</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">22</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">23</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">24</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">25</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">26</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">27</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">28</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">29</span> absoluutselt hea vend</div>
-							<div class="position"><span class="number">30</span> absoluutselt hea vend</div>
 						</div>
 					</div>
 				</div>

@@ -84,10 +84,14 @@
             </div>
             
             <div class="start">
+              <?php if ($user_can_participate): ?>
               Stop - Esmalt soovitame tutvuda <strong><a href="">JUHENDIGA</a></strong>!
               <div class="button">
                 <a href="index.php?a=start"><span>Alusta kvalifikatsiooni</span></a>
               </div>
+              <?php else: ?>
+                Oled sel nädalal juba Civicu teadmistetesti sooritanud! Proovi järgmisel nädalal kindlasti uuesti!
+              <?php endif;?>
             </div>
             
           </div>
@@ -109,19 +113,7 @@
           </div>
         </div>
 
-        <div class="block block-top-30">
-          <div class="top-30">
-            <div class="block-head">
-              <h2 class="icon icon-top-30">TOP 30</h2>
-              <div class="link">
-                <a href="#">&gt; Kõik</a>
-              </div>
-            </div>
-            <div class="top-list">
-              <?php include_once(dirname(__FILE__).'/_toplist.php'); ?>
-            </div>
-          </div>
-        </div>
+        <?php include_once(dirname(__FILE__).'/_toplist.php'); ?>
         
       </div>
       <div class="clear"></div>
