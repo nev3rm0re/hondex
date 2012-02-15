@@ -87,7 +87,7 @@
 							<h2>Sinu tulemus:</h2>
 							
 							<div class="score">
-								<span class="label">Skoor:</span> <?php echo $total_score; ?> / <?php echo round($total_score / 27000 * 100); ?>%<br/>
+								<span class="label">Skoor:</span> <?php echo $total_score; ?> / <?php echo round($quiz_score / 21000 * 100); ?>%<br/>
 								<span class="label">Positsioon:</span> <?php echo $rank; ?><br/>
 								<span class="label">Katseid jäänud:</span> <?php echo $attempts_left;?>
 							</div>
