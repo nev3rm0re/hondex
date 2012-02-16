@@ -113,7 +113,7 @@
   }
   
   function user_can_participate($user_id) {
-    $game = R::findOne('game', 'started_at > ?', array(date('Y-m-d H:i:s', strtotime('-1 week'))));
+    $game = R::findOne('game', 'user_id = ? AND started_at > ?', array($user_id, date('Y-m-d H:i:s', strtotime('-1 week'))));
     return ($game === false);
   }
   
