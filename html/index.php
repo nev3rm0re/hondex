@@ -6,10 +6,7 @@
   define('QUIZ_TIMELIMIT', 6000); // seconds
   
   require_once(dirname(__FILE__).'/lib/rb127lg.php');
-  $host = 'localhost';
-  $dbname = 'hondex';
-  $user = 'hondex';
-  $pass = 'hondex';
+  require_once('db_config.php');
   R::setup("mysql:host=$host;dbname=$dbname", $user, $pass);
   
   session_start();
@@ -19,7 +16,7 @@
    * @todo Add logic for checking that a user is logged in and redirect if not
    */
   function get_loggedin_user() {
-    $user_id = 1;
+    $user_id = $_SERVER['REMOTE_ADDR'];
     return $user_id;
   }
   
@@ -32,18 +29,31 @@
     return 'User #'.$user_id;
   }
   
-  function redirect($url) {
+  function redirect($url, $return = false) {
     switch ($url) {
       case 'questions':
-        header('Location: index.php?a=questions');
-        die();
+        $url = 'index.php?a=questions';
         break;
         
       case 'result':
-        header('Location: index.php?a=result');
-        die();
+        $url = 'index.php?a=result';
+        break;
+        
+      case 'index':
+        $url = 'index.php';
         break;
     }
+    
+    if ($return) {
+      return $url;
+    }
+    
+    if (is_ajax_request()) {
+      echo '<script type="text/javascript">window.location = "'.$url.'"</script>';
+    } else {
+      header('Location: ' . $url);
+    }
+    die();
   }
   
   function attempts_left($user_id) {
@@ -95,6 +105,13 @@
     return $quiz_score;
   }
   
+  function quiz_has_expired($game) {
+    $start = strtotime($game->started_at);
+    $end = time(); 
+    
+    return ($end - $start > QUIZ_TIMELIMIT); 
+  }
+  
   function user_can_participate($user_id) {
     $game = R::findOne('game', 'started_at > ?', array(date('Y-m-d H:i:s', strtotime('-1 week'))));
     return ($game === false);
@@ -129,6 +146,7 @@
   /*
    * get /start
    */
+  
 
   if ($action == 'start') {
     $game = R::dispense('game');
@@ -154,8 +172,27 @@
     redirect('questions');
   }
   
-  if ($action == 'questions') {
+  
+  function is_ajax_request() {
+    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+      return false;
+    } 
+    
+    if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  
+  function execute_questions() {
     $game = R::load('game', $_SESSION['quiz_id']);
+    
+    if (quiz_has_expired($game)) {
+      finish_game($game);
+      redirect('result');
+    }
     
     if (($question_id = find_first_unanswered_question(unserialize($game->answers))) == null) {
       redirect('result');
@@ -166,15 +203,32 @@
     
     $seconds_left = strtotime($game->started_at) - time() + QUIZ_TIMELIMIT;
     
-    include_once(dirname(__FILE__).'/views/test-middle.php');
+    ob_start();
+    if (is_ajax_request()) {
+      include_once(dirname(__FILE__).'/views/_question.php');
+    } else {
+      include_once(dirname(__FILE__).'/views/test-middle.php');
+    }
+    $content = ob_get_clean();
+    echo $content;
+  }
+  
+  if ($action == 'questions') {
+    execute_questions();
   }
   
   if ($action == 'answer') {
+    $game = R::load('game', $_SESSION['quiz_id']);
+    
+    if (quiz_has_expired($game)) {
+      finish_game($game);
+      redirect('result');
+    }
+    
     $chosen_answer = $_POST['answer'];
     $answer = R::load('answer', $chosen_answer);
     $question_id = $answer->question_id;
     
-    $game = R::load('game', $_SESSION['quiz_id']);
     $answers = unserialize($game->answers);
     foreach ($answers as &$answer) {
       if ($answer['question'] == $question_id) {
@@ -198,7 +252,12 @@
     
     R::store($game);
     
-    redirect('questions');
+    if (is_ajax_request()) {
+      execute_questions();
+    } else {
+      redirect('questions');
+    }
+    
   }
   
   function find_first_unanswered_question($answers) {
@@ -212,23 +271,38 @@
     return $question_id;
   }
   
-  if ($action == 'result') {
-    $game = R::load('game', $_SESSION['quiz_id']);
-    
-    $user_answers = unserialize($game->answers);
-    
-    $question_id = find_first_unanswered_question($user_answers);
-    if ($question_id != null) {
-      redirect('questions');
+  function game_is_finished($game) {
+    if (quiz_has_expired($game)) {
+      return true;
     }
     
-    $total_score = calculate_score($game);
-    $quiz_score = calculate_quiz_score($game);
+    $question_id = find_first_unanswered_question(unserialize($game->answers));
+    if ($question_id == null) {
+      return true;
+    }
     
-    $rank = R::getCell('SELECT COUNT(*) FROM game WHERE score > ?', array($total_score)) + 1;
-    $attempts_left = attempts_left($game->user_id);
+    return false;
+  }
+  
+  if ($action == 'result') {
+    if (!isset($_SESSION['quiz_id'])) {
+      redirect('index');
+    }
+    $game = R::load('game', $_SESSION['quiz_id']);
     
-    include_once('views/test-end.php');
+    if (!game_is_finished($game)) {
+      redirect('questions');
+    } else {
+      $total_score = calculate_score($game);
+      
+      // needed for percentage
+      $quiz_score = calculate_quiz_score($game);
+      
+      $rank = R::getCell('SELECT COUNT(*) FROM game WHERE score > ?', array($total_score)) + 1;
+      $attempts_left = attempts_left($game->user_id);
+      
+      include_once('views/test-end.php');
+    }
   }
 
   if ($action == 'top') {

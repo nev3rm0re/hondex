@@ -2,8 +2,10 @@
   error_reporting(E_ALL);
   ini_set('display_errors', true);
   
+  
   require_once(dirname(__FILE__).'/../lib/rb127lg.php');
-  R::setup('mysql:host=localhost;dbname=hondex', 'hondex', 'hondex');
+  require_once('../db_config.php');
+  R::setup("mysql:host=$host;dbname=$dbname", $user, $pass);
   
   $lines = file('questions.php');
   

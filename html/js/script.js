@@ -1,15 +1,18 @@
-$(function(){
-	Cufon.replace('#header .menu a, h2, h3, .block-top-10 .position .number, .block-news .date, #content .head .timer');
+function cufon_replace() {
+  Cufon.replace('#header .menu a, h2, h3, .block-top-10 .position .number, .block-news .date, #content .head .timer');
 
-	Cufon.replace('.qualify-here .button a', {
-		textShadow: '1px 1px #570708'
-	});
-	
-	Cufon.replace('.q-number, .q-content label');
-	
-	Cufon.replace('.q-content .button a', {
-		textShadow: '1px 1px #434344'
-	});
+  Cufon.replace('.qualify-here .button a', {
+    textShadow: '1px 1px #570708'
+  });
+  
+  Cufon.replace('.q-number, .q-content label');
+  
+  Cufon.replace('.q-content .button a', {
+    textShadow: '1px 1px #434344'
+  });
+}
+$(function(){
+	cufon_replace();
 	
 	$('input.form-text', '#header .login, #content').each(function(i){
 		if($(this).val() != '')

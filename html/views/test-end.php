@@ -63,7 +63,7 @@
 			</div>
 			
 			<div class="logo">
-				<a href="index.html"><img src="images/honda-civic-expedition.png" alt=""/></a>
+				<a href="index.php"><img src="images/honda-civic-expedition.png" alt=""/></a>
 			</div>
 		</div>
 	</div>

@@ -42,8 +42,7 @@ c. S, Comfort
 a. Executive
 b. Elegance
 c. Comfort
-12. Millisel varustusastmel on 2012 Civic 5D põhivarustuses aktiivsed kaugtuled(HSS) ehk tuled, mis automaatselt lülituvad lähituledelt kaugtuledele ja
-tagasi?
+12. Millisel varustusastmel on 2012 Civic 5D põhivarustuses aktiivsed kaugtuled(HSS) ehk tuled, mis automaatselt lülituvad lähituledelt kaugtuledele ja tagasi?
 a. Executive
 b. Comfort
 c. Elegance

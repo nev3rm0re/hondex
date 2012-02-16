@@ -63,7 +63,7 @@
 			</div>
 			
 			<div class="logo">
-				<a href="index.html"><img src="images/honda-civic-expedition.png" alt=""/></a>
+				<a href="index.php"><img src="images/honda-civic-expedition.png" alt=""/></a>
 			</div>
 		</div>
 	</div>
@@ -76,34 +76,7 @@
 						<?php echo format_time(strtotime($game->started_at) - time() + QUIZ_TIMELIMIT); ?>
 					</div>
 				</div>
-				<div class="content">
-					
-					<div class="q-content">
-						<div class="q-number">
-							<span class="current"><?php echo $question->id; ?></span>/21
-						</div>
-						
-						<div class="question">
-							<form action="index.php?a=answer" method="post">
-								<h2><?php echo $question->text;?></h2>
-								
-								<?php foreach ($answers as $answer): ?>
-								  <div class="form-radio-wrap">
-                    <label><?php echo $answer->text;?><input type="radio" name="answer" value="<?php echo $answer->id; ?>" class="form-radio"/></label>
-                  </div>  
-								<?php endforeach; ?>
-								
-								<div class="clear"></div>
-								
-								<div class="button">
-									<a href="#" id="answer_btn"><span>Valmis - Järgmine küsimus</span></a>
-								</div>
-								<input type="submit" value="" style="display:none" />
-							</form>
-						</div>
-					</div>
-					<div class="clear"></div>
-				</div>
+				<?php include_once(dirname(__FILE__).'/_question.php'); ?>
 			</div>
 			<div id="sidebar">
 				<div class="block">
@@ -139,84 +112,21 @@
 </div>
 <script type="text/javascript" charset="utf-8">
 	jQuery(function($){
-	  $('#answer_btn').click(function(e) {
+	  $('#answer_btn').live('click', function(e) {
 	    e.preventDefault();
 	    if ($('input[name=answer]:checked').length != 0) {
-	      $(this).parents('form').submit();
+	      $form = $(this).parents('form');
+	      $.post($form.attr('action'), $form.serialize(), function(r) {
+	        $('.content').replaceWith(r);
+	        cufon_replace();
+	      })
+	      // $(this).parents('form').submit();
 	    }
 	  });
 	});
 </script>
+<script type="text/javascript" src="js/countdown.js"></script>
 <script type="text/javascript" charset="utf-8">
-var javascript_countdown = function () {
-  var time_left = 10; //number of seconds for countdown
-  var output_element_id = 'javascript_countdown_time';
-  var keep_counting = 1;
-  var no_time_left_message = 'No time left for JavaScript countdown!';
- 
-  function countdown() {
-    if(time_left < 2) {
-      keep_counting = 0;
-    }
- 
-    time_left = time_left - 1;
-  }
- 
-  function add_leading_zero(n) {
-    return (n.toString().length < 2 ? '0' : '') + n;
-  }
- 
-  function format_output() {
-    var hours, minutes, seconds;
-    seconds = time_left % 60;
-    minutes = Math.floor(time_left / 60) % 60;
-    hours = Math.floor(time_left / 3600);
- 
-    seconds = add_leading_zero( seconds );
-    minutes = add_leading_zero( minutes );
-    hours = add_leading_zero( hours );
- 
-    return hours + ':' + minutes + ':' + seconds;
-  }
- 
-  function show_time_left() {
-    document.getElementById(output_element_id).innerHTML = format_output();//time_left;
-    Cufon.replace('.timer');
-  }
- 
-  function no_time_left() {
-    document.getElementById(output_element_id).innerHTML = no_time_left_message;
-  }
- 
-  return {
-    count: function () {
-      countdown();
-      show_time_left();
-    },
-    timer: function () {
-      javascript_countdown.count();
- 
-      if(keep_counting) {
-        setTimeout("javascript_countdown.timer();", 1000);
-      } else {
-        no_time_left();
-      }
-    },
-    //Kristian Messer requested recalculation of time that is left
-    setTimeLeft: function (t) {
-      time_left = t;
-      if(keep_counting == 0) {
-        javascript_countdown.timer();
-      }
-    },
-    init: function (t, element_id) {
-      time_left = t;
-      output_element_id = element_id;
-      javascript_countdown.timer();
-    }
-  };
-}();
- 
 //time to countdown in seconds, and element ID
 jQuery(function($){
   javascript_countdown.init(<?php echo $seconds_left; ?>, 'javascript_countdown_time');

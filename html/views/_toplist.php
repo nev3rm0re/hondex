@@ -7,7 +7,7 @@
     <div class="block-head">
       <h2 class="icon icon-top-30">TOP 30</h2>
       <div class="link">
-        <a href="index.php?action=top">&gt; Kõik</a>
+        <a href="index.php?a=top">&gt; Kõik</a>
       </div>
     </div>
     <div class="top-list">
